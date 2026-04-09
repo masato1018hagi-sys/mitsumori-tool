@@ -1,1 +1,220 @@
-<!-- placeholder -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>見積書自動作成 | 知多クリーン・おそうじ侍</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: #f0f4f8; color: #333; }
+  .app-header { background: linear-gradient(135deg, #1a5276 0%, #2e86c1 100%); color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .app-header h1 { font-size: 20px; font-weight: 700; }
+  .app-header span { font-size: 13px; opacity: 0.8; }
+  .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
+  .card-header { background: #2e86c1; color: white; padding: 12px 20px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-body { padding: 20px; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+  .form-row.full { grid-template-columns: 1fr; }
+  .form-group { display: flex; flex-direction: column; gap: 4px; }
+  .form-group label { font-size: 12px; color: #555; font-weight: 600; }
+  .form-group input, .form-group select, .form-group textarea { border: 1.5px solid #d0dce8; border-radius: 6px; padding: 8px 10px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2e86c1; box-shadow: 0 0 0 3px rgba(46,134,193,0.1); }
+  .form-group textarea { resize: vertical; min-height: 60px; }
+  .service-row { display: grid; grid-template-columns: 2fr 1fr 80px 36px; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .service-row input, .service-row select { border: 1.5px solid #d0dce8; border-radius: 6px; padding: 7px 9px; font-size: 13px; font-family: inherit; }
+  .service-row input:focus, .service-row select:focus { outline: none; border-color: #2e86c1; }
+  .btn-remove { background: #e74c3c; color: white; border: none; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+  .btn-remove:hover { background: #c0392b; }
+  .btn-add { background: #27ae60; color: white; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .btn-add:hover { background: #1e8449; }
+  .service-header { display: grid; grid-template-columns: 2fr 1fr 80px 36px; gap: 8px; margin-bottom: 6px; }
+  .service-header span { font-size: 11px; color: #888; font-weight: 600; }
+  .total-section { border-top: 2px solid #eaf0f6; margin-top: 16px; padding-top: 16px; }
+  .total-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 14px; }
+  .total-row.grand { font-weight: 700; font-size: 18px; color: #1a5276; border-top: 2px solid #2e86c1; margin-top: 8px; padding-top: 10px; }
+  .discount-row { display: flex; align-items: center; gap: 8px; }
+  .discount-row input { width: 100px; border: 1.5px solid #d0dce8; border-radius: 6px; padding: 5px 8px; font-size: 13px; }
+  .btn-primary { background: linear-gradient(135deg, #1a5276, #2e86c1); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s; }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-secondary { background: #eaf0f6; color: #1a5276; border: 2px solid #2e86c1; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-secondary:hover { background: #d5e8f5; }
+  #preview { padding: 24px; font-size: 13px; display: none; }
+  .estimate-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+  .estimate-table th { background: #2e86c1; color: white; padding: 8px 10px; font-size: 12px; text-align: left; }
+  .estimate-table td { border-bottom: 1px solid #eaf0f6; padding: 8px 10px; font-size: 13px; }
+  .estimate-table tr:last-child td { border-bottom: none; }
+  .estimate-table .num { text-align: right; }
+  @media print { body { background: white; } .app-header, .card:not(#preview-card), .no-print { display: none !important; } .container { display: block; max-width: 100%; padding: 0; } #preview-card { box-shadow: none; border-radius: 0; } #preview { display: block !important; } .btn-primary, .btn-secondary { display: none; } }
+  .quick-btn { background: #eaf4fb; border: 1px solid #aed6f1; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; color: #1a5276; font-family: inherit; transition: background 0.15s; }
+  .quick-btn:hover { background: #d6eaf8; }
+</style>
+</head>
+<body>
+<div class="app-header">
+  <div>
+    <h1>📋 見積書自動作成</h1>
+    <span>知多クリーン・おそうじ侍</span>
+  </div>
+</div>
+<div class="container">
+  <div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">👤 お客様情報</div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label>お客様名 *</label><input type="text" id="customerName" placeholder="例：山田 太郎"></div>
+          <div class="form-group"><label>敗称</label><select id="honorific"><option>様</option><option>御中</option><option>さん</option></select></div>
+        </div>
+        <div class="form-row full"><div class="form-group"><label>住所</label><input type="text" id="customerAddress" placeholder="例：愛知県知多市「「町1-1"></div></div>
+        <div class="form-row">
+          <div class="form-group"><label>電話番号</label><input type="text" id="customerPhone" placeholder="090-0000-0000"></div>
+          <div class="form-group"><label>集客チャネル</label><select id="channel"><option value="">選択してください</option><option>ユアマイスター</option><option>ミツモア</option><option>くらしのマーケット</option><option>HP（Web集客）</option><option>リピート・紹介</option><option>テレアポ（個人）</option><option>法人テレアポ</option><option>その他ポータル</option><option>チラシ</option><option>東邦ガス</option><option>その他</option></select></div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">📄 見積書情報</div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label>見積番号</label><input type="text" id="estimateNo" placeholder="例：EST-2026-001"></div>
+          <div class="form-group"><label>作成日</label><input type="date" id="issueDate"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>有効期限</label><input type="date" id="validDate"></div>
+          <div class="form-group"><label>作業予定日</label><input type="date" id="workDate"></div>
+        </div>
+        <div class="form-row">
+          <div class="form-group"><label>作業時間帯</label><input type="text" id="workTime" placeholder="例：10:00～12:00"></div>
+          <div class="form-group"><label>担当スタッフ</label><input type="text" id="staffName" placeholder="例：田中"></div>
+        </div>
+        <div class="form-row full"><div class="form-group"><label>備考</label><textarea id="remarks" placeholder="特記事項・注意事項など"></textarea></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">💳 支払い情報</div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group"><label>支払方法</label><select id="paymentMethod"><option>現金</option><option>振込</option><option>クレジットカード</option><option>電子マネー</option><option>その他</option></select></div>
+          <div class="form-group"><label>支払タイミング</label><select id="paymentTiming"><option>作業当日</option><option>作業後請求書発行</option><option>前払い</option></select></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">🧹 サービス内容</div>
+      <div class="card-body">
+        <div class="service-header"><span>サービス名</span><span>単価（円）</span><span>数量</span><span></span></div>
+        <div id="serviceList"></div>
+        <button class="btn-add" onclick="addService()">＋ サービスを追加</button>
+        <div style="margin-top:16px; border-top:1px solid #eee; padding-top:12px;">
+          <div style="font-size:12px; color:#888; font-weight:600; margin-bottom:8px;">🔖 クイック追加</div>
+          <div style="display:flex; flex-wrap:wrap; gap:6px;">
+            <button class="quick-btn" onclick="quickAdd('エアコン清掃（壁掛け）',13200,1)">エアコン壁掛け</button>
+            <button class="quick-btn" onclick="quickAdd('エアコン清掃（天井埋込）',27500,1)">エアコン天井埋込</button>
+            <button class="quick-btn" onclick="quickAdd('換気扇（レンジフード）清掃',16500,1)">換気扇</button>
+            <button class="quick-btn" onclick="quickAdd('浴室清掃',22000,1)">浴室</button>
+            <button class="quick-btn" onclick="quickAdd('トイレ清掃',8800,1)">トイレ</button>
+            <button class="quick-btn" onclick="quickAdd('キッチン清掃',16500,1)">キッチン</button>
+            <button class="quick-btn" onclick="quickAdd('洗面所清掃',8800,1)">洗面所</button>
+            <button class="quick-btn" onclick="quickAdd('窓・サッシ清掃',11000,1)">窓・サッシ</button>
+            <button class="quick-btn" onclick="quickAdd('ハウスクリーニング（1LDK）',55000,1)">1LDK丸ごと</button>
+            <button class="quick-btn" onclick="quickAdd('ハウスクリーニング（2LDK）',77000,1)">2LDK丸ごと</button>
+            <button class="quick-btn" onclick="quickAdd('ハウスクリーニング（3LDK）',99000,1)">3LDK丸ごと</button>
+            <button class="quick-btn" onclick="quickAdd('出張費',3300,1)">出張費</button>
+          </div>
+        </div>
+        <div class="total-section">
+          <div class="total-row"><span>小計</span><span id="subtotal">¥0</span></div>
+          <div class="total-row"><span class="discount-row">割引<input type="number" id="discountAmt" placeholder="0" min="0" oninput="calcTotal()" style="width:100px;">円</span><span id="discountDisplay" style="color:#e74c3c;">-¥0</span></div>
+          <div class="total-row"><span>税抜合計</span><span id="beforeTax">¥0</span></div>
+          <div class="total-row"><span>消費税（10%）</span><span id="taxAmt">¥0</span></div>
+          <div class="total-row grand"><span>お見積金額（税込）</span><span id="grandTotal">¥0</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">⚡ アクション</div>
+      <div class="card-body">
+        <button class="btn-primary" onclick="generatePreview()">📄 見積書を生成・プレビュー</button>
+        <button class="btn-secondary no-print" onclick="printEstimate()">🖨️ 印刷 / PDF保存</button>
+        <button class="btn-secondary no-print" onclick="resetForm()">🔄 リセット</button>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="previewArea" style="display:none; max-width:800px; margin:0 auto 32px; padding:0 16px;">
+  <div class="card" id="preview-card"><div id="preview"></div></div>
+  <div class="no-print" style="display:flex; gap:10px; margin-top:12px;">
+    <button class="btn-primary" style="flex:1;" onclick="printEstimate()">🖨️ 印刷 / PDF保存</button>
+    <button class="btn-secondary" style="flex:1;" onclick="closePreview()">✕ 閉じる</button>
+  </div>
+</div>
+<script>
+let serviceCount=0;
+window.onload=function(){
+  const today=new Date();
+  const fmt=d=>d.toISOString().split('T')[0];
+  document.getElementById('issueDate').value=fmt(today);
+  const valid=new Date(today);valid.setDate(valid.getDate()+30);
+  document.getElementById('validDate').value=fmt(valid);
+  const y=today.getFullYear(),m=String(today.getMonth()+1).padStart(2,'0'),d2=String(today.getDate()).padStart(2,'0'),rand=String(Math.floor(Math.random()*900)+100);
+  document.getElementById('estimateNo').value=`EST-${y}${m}${d2}-${rand}`;
+  addService();
+};
+function addService(name='',price='',qty=1){
+  serviceCount++;
+  const id=serviceCount;
+  const row=document.createElement('div');
+  row.className='service-row';row.id=`srow-${id}`;
+  row.innerHTML=`<input type="text" placeholder="サービス名" value="${name}" oninput="calcTotal()"><input type="number" placeholder="単価" value="${price}" min="0" oninput="calcTotal()"><input type="number" placeholder="数量" value="${qty}" min="1" style="text-align:center;" oninput="calcTotal()"><button class="btn-remove" onclick="removeService(${id})">x</button>`;
+  document.getElementById('serviceList').appendChild(row);
+  calcTotal();
+}
+function quickAdd(name,price,qty){addService(name,price,qty);}
+function removeService(id){const el=document.getElementById(`srow-${id}`);if(el){el.remove();calcTotal();}}
+function calcTotal(){
+  const rows=document.querySelectorAll('.service-row');let subtotal=0;
+  rows.forEach(row=>{const inputs=row.querySelectorAll('input');const price=parseFloat(inputs[1].value)||0;const qty=parseFloat(inputs[2].value)||0;subtotal+=price*qty;});
+  const discount=parseFloat(document.getElementById('discountAmt').value)||0;
+  const beforeTax=Math.max(0,subtotal-discount);const tax=Math.round(beforeTax*0.1);const grand=beforeTax+tax;
+  const fmt=n=>'¥'+n.toLocaleString();
+  document.getElementById('subtotal').textContent=fmt(subtotal);
+  document.getElementById('discountDisplay').textContent=discount>0?`-${fmt(discount)}`:'-¥0';
+  document.getElementById('beforeTax').textContent=fmt(beforeTax);
+  document.getElementById('taxAmt').textContent=fmt(tax);
+  document.getElementById('grandTotal').textContent=fmt(grand);
+}
+function fmtDate(str){if(!str)return'未定';const d=new Date(str);return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;}
+function generatePreview(){
+  const name=document.getElementById('customerName').value||'（未入力）';
+  const honorific=document.getElementById('honorific').value;
+  const address=document.getElementById('customerAddress').value;
+  const phone=document.getElementById('customerPhone').value;
+  const channel=document.getElementById('channel').value;
+  const estimateNo=document.getElementById('estimateNo').value;
+  const issueDate=fmtDate(document.getElementById('issueDate').value);
+  const validDate=fmtDate(document.getElementById('validDate').value);
+  const workDate=fmtDate(document.getElementById('workDate').value);
+  const workTime=document.getElementById('workTime').value;
+  const staffName=document.getElementById('staffName').value;
+  const remarks=document.getElementById('remarks').value;
+  const payMethod=document.getElementById('paymentMethod').value;
+  const payTiming=document.getElementById('paymentTiming').value;
+  let serviceRows='';let subtotal=0;
+  document.querySelectorAll('.service-row').forEach(row=>{const inputs=row.querySelectorAll('input');const sname=inputs[0].value;const price=parseFloat(inputs[1].value)||0;const qty=parseFloat(inputs[2].value)||0;if(!sname&&price===0)return;const amount=price*qty;subtotal+=amount;serviceRows+=`<tr><td>${sname||'（未入力）'}</td><td class="num">¥${price.toLocaleString()}</td><td class="num">${qty}</td><td class="num">¥${amount.toLocaleString()}</td></tr>`;});
+  const discount=parseFloat(document.getElementById('discountAmt').value)||0;
+  const beforeTax=Math.max(0,subtotal-discount);const tax=Math.round(beforeTax*0.1);const grand=beforeTax+tax;
+  document.getElementById('preview').innerHTML=`<div style="padding:28px 32px;background:white;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;"><div><div style="font-size:11px;color:#2e86c1;font-weight:700;margin-bottom:4px;">知多クリーン・おそうじ侍</div><div style="font-size:28px;font-weight:700;color:#1a5276;letter-spacing:2px;">見 積 書</div></div><div style="text-align:right;font-size:12px;color:#666;"><div>見積番号：<strong>${estimateNo}</strong></div><div style="margin-top:4px;">発行日：${issueDate}</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;"><div style="border:1px solid #dce6ef;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#2e86c1;font-weight:700;border-bottom:1px solid #eaf0f6;padding-bottom:4px;margin-bottom:8px;">お客様</div><div style="font-size:18px;font-weight:700;">${name} ${honorific}</div>${address?`<div style="font-size:12px;color:#555;margin-top:4px;">〒 ${address}</div>`:''} ${phone?`<div style="font-size:12px;color:#555;">📞 ${phone}</div>`:''} ${channel?`<div style="font-size:11px;color:#888;margin-top:4px;">集客：${channel}</div>`:''}</div><div style="border:1px solid #dce6ef;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#2e86c1;font-weight:700;border-bottom:1px solid #eaf0f6;padding-bottom:4px;margin-bottom:8px;">作業情報</div><div style="font-size:13px;"><strong>作業日：</strong>${workDate}</div>${workTime?`<div style="font-size:13px;"><strong>時間帯：</strong>${workTime}</div>`:''} ${staffName?`<div style="font-size:13px;"><strong>担当：</strong>${staffName}</div>`:''}<div style="font-size:13px;"><strong>支払：</strong>${payMethod}（${payTiming}）</div></div></div><div style="background:#fff8e1;border:1px solid #f9c825;border-radius:6px;padding:8px 14px;font-size:12px;color:#7d6608;margin-bottom:16px;">⏰ 本見積の有効期限：<strong>${validDate}</strong></div><table class="estimate-table" style="width:100%;border-collapse:collapse;margin-bottom:16px;"><thead><tr><th style="background:#2e86c1;color:white;padding:9px 12px;font-size:12px;text-align:left;">サービス内容</th><th style="background:#2e86c1;color:white;padding:9px 12px;font-size:12px;text-align:right;">単価</th><th style="background:#2e86c1;color:white;padding:9px 12px;font-size:12px;text-align:right;">数量</th><th style="background:#2e86c1;color:white;padding:9px 12px;font-size:12px;text-align:right;">金額</th></tr></thead><tbody>${serviceRows||'<tr><td colspan="4" style="text-align:center;padding:12px;color:#aaa;">サービスが入力されていません</td></tr>'}</tbody></table><div style="border:2px solid #2e86c1;border-radius:8px;padding:14px 18px;margin-bottom:16px;max-width:320px;margin-left:auto;"><div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;"><span>小計</span><span>¥${subtotal.toLocaleString()}</span></div>${discount>0?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:#e74c3c;"><span>割引</span><span>-¥${discount.toLocaleString()}</span></div>`:''}<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;"><span>税抜合計</span><span>¥${beforeTax.toLocaleString()}</span></div><div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;"><span>消費税（10%）</span><span>¥${tax.toLocaleString()}</span></div><div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700;color:#1a5276;border-top:2px solid #2e86c1;margin-top:8px;padding-top:10px;"><span>お見積金額（税込）</span><span>¥${grand.toLocaleString()}</span></div></div>${remarks?`<div style="border:1px solid #dce6ef;border-radius:8px;padding:12px;margin-bottom:16px;"><div style="font-size:11px;color:#2e86c1;font-weight:700;margin-bottom:6px;">📝 備考・特記事項</div><div style="font-size:13px;white-space:pre-wrap;color:#555;">${remarks}</div></div>`:''}<div style="border-top:1px solid #eee;padding-top:14px;font-size:11px;color:#888;text-align:center;line-height:1.8;"><strong style="color:#1a5276;">レオンバンク・テクノロジーズ株式会社</strong><br>知多クリーン・おそうじ侍<br>ご不明な点はお気軽にお問い合わせください</div></div>`;
+  document.getElementById('preview').style.display='block';
+  document.getElementById('previewArea').style.display='block';
+  document.getElementById('previewArea').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function closePreview(){document.getElementById('previewArea').style.display='none';document.getElementById('preview').style.display='none';}
+function printEstimate(){if(document.getElementById('previewArea').style.display==='none'){generatePreview();setTimeout(()=>window.print(),400);}else{window.print();}}
+function resetForm(){if(!confirm('入力内容をすべてリセットしますか？'))return;['customerName','customerAddress','customerPhone','workDate','workTime','staffName','remarks','discountAmt'].forEach(id=>document.getElementById(id).value='');document.getElementById('channel').value='';document.getElementById('serviceList').innerHTML='';serviceCount=0;closePreview();calcTotal();addService();window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>
