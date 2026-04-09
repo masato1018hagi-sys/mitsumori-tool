@@ -7,108 +7,380 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Hiragino Kaku Gothic ProN', 'Meiryo', sans-serif; background: #f0f4f8; color: #333; }
-  .app-header { background: linear-gradient(135deg, #1a5276 0%, #2e86c1 100%); color: white; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+
+  /* ===== ヘッダー ===== */
+  .app-header {
+    background: linear-gradient(135deg, #1a5276 0%, #2e86c1 100%);
+    color: white; padding: 16px 24px;
+    display: flex; align-items: center; gap: 12px;
+  }
   .app-header h1 { font-size: 20px; font-weight: 700; }
   .app-header span { font-size: 13px; opacity: 0.8; }
+
+  /* ===== レイアウト ===== */
   .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
   @media (max-width: 768px) { .container { grid-template-columns: 1fr; } }
+
+  /* ===== カード ===== */
   .card { background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); overflow: hidden; }
-  .card-header { background: #2e86c1; color: white; padding: 12px 20px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .card-header {
+    background: #2e86c1; color: white; padding: 12px 20px; font-weight: 700;
+    font-size: 14px; display: flex; align-items: center; gap: 8px;
+    justify-content: space-between;
+  }
+  .card-header-title { display: flex; align-items: center; gap: 8px; }
   .card-body { padding: 20px; }
+
+  /* ===== フォーム ===== */
   .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
   .form-row.full { grid-template-columns: 1fr; }
   .form-group { display: flex; flex-direction: column; gap: 4px; }
   .form-group label { font-size: 12px; color: #555; font-weight: 600; }
-  .form-group input, .form-group select, .form-group textarea { border: 1.5px solid #d0dce8; border-radius: 6px; padding: 8px 10px; font-size: 14px; font-family: inherit; transition: border-color 0.2s; }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #2e86c1; box-shadow: 0 0 0 3px rgba(46,134,193,0.1); }
+  .form-group input, .form-group select, .form-group textarea {
+    border: 1.5px solid #d0dce8; border-radius: 6px; padding: 8px 10px;
+    font-size: 14px; font-family: inherit; transition: border-color 0.2s;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+    outline: none; border-color: #2e86c1; box-shadow: 0 0 0 3px rgba(46,134,193,0.1);
+  }
   .form-group textarea { resize: vertical; min-height: 60px; }
-  .service-row { display: grid; grid-template-columns: 2fr 1fr 80px 36px; gap: 8px; align-items: center; margin-bottom: 8px; }
-  .service-row input, .service-row select { border: 1.5px solid #d0dce8; border-radius: 6px; padding: 7px 9px; font-size: 13px; font-family: inherit; }
-  .service-row input:focus, .service-row select:focus { outline: none; border-color: #2e86c1; }
-  .btn-remove { background: #e74c3c; color: white; border: none; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+
+  /* ===== サービス追加 ===== */
+  .service-row {
+    display: grid; grid-template-columns: 2fr 1fr 80px 36px; gap: 8px;
+    align-items: center; margin-bottom: 8px;
+  }
+  .service-row input, .service-row select {
+    border: 1.5px solid #d0dce8; border-radius: 6px; padding: 7px 9px;
+    font-size: 13px; font-family: inherit;
+  }
+  .service-row input:focus, .service-row select:focus {
+    outline: none; border-color: #2e86c1;
+  }
+  .btn-remove {
+    background: #e74c3c; color: white; border: none; border-radius: 6px;
+    width: 32px; height: 32px; cursor: pointer; font-size: 16px; display: flex;
+    align-items: center; justify-content: center;
+  }
   .btn-remove:hover { background: #c0392b; }
-  .btn-add { background: #27ae60; color: white; border: none; border-radius: 6px; padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+  .btn-add {
+    background: #27ae60; color: white; border: none; border-radius: 6px;
+    padding: 8px 16px; cursor: pointer; font-size: 13px; font-weight: 600;
+    display: flex; align-items: center; gap: 6px; margin-top: 4px;
+  }
   .btn-add:hover { background: #1e8449; }
-  .service-header { display: grid; grid-template-columns: 2fr 1fr 80px 36px; gap: 8px; margin-bottom: 6px; }
+  .service-header {
+    display: grid; grid-template-columns: 2fr 1fr 80px 36px; gap: 8px;
+    margin-bottom: 6px;
+  }
   .service-header span { font-size: 11px; color: #888; font-weight: 600; }
+
+  /* ===== 合計 ===== */
   .total-section { border-top: 2px solid #eaf0f6; margin-top: 16px; padding-top: 16px; }
   .total-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 14px; }
   .total-row.grand { font-weight: 700; font-size: 18px; color: #1a5276; border-top: 2px solid #2e86c1; margin-top: 8px; padding-top: 10px; }
   .discount-row { display: flex; align-items: center; gap: 8px; }
   .discount-row input { width: 100px; border: 1.5px solid #d0dce8; border-radius: 6px; padding: 5px 8px; font-size: 13px; }
-  .btn-primary { background: linear-gradient(135deg, #1a5276, #2e86c1); color: white; border: none; border-radius: 8px; padding: 12px 24px; font-size: 15px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s; }
+
+  /* ===== ボタン ===== */
+  .btn-primary {
+    background: linear-gradient(135deg, #1a5276, #2e86c1); color: white;
+    border: none; border-radius: 8px; padding: 12px 24px; font-size: 15px;
+    font-weight: 700; cursor: pointer; width: 100%; margin-top: 16px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: opacity 0.2s;
+  }
   .btn-primary:hover { opacity: 0.9; }
-  .btn-secondary { background: #eaf0f6; color: #1a5276; border: 2px solid #2e86c1; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700; cursor: pointer; width: 100%; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-secondary {
+    background: #eaf0f6; color: #1a5276; border: 2px solid #2e86c1;
+    border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 700;
+    cursor: pointer; width: 100%; margin-top: 8px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
   .btn-secondary:hover { background: #d5e8f5; }
+
+  /* ===== プレビュー ===== */
   #preview { padding: 24px; font-size: 13px; display: none; }
+  .estimate-title { text-align: center; font-size: 22px; font-weight: 700; margin-bottom: 4px; color: #1a5276; }
+  .estimate-subtitle { text-align: center; font-size: 12px; color: #888; margin-bottom: 20px; }
+  .estimate-no { text-align: right; font-size: 12px; color: #666; margin-bottom: 16px; }
+  .estimate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .estimate-box { border: 1px solid #dce6ef; border-radius: 8px; padding: 12px; }
+  .estimate-box h3 { font-size: 11px; color: #2e86c1; font-weight: 700; margin-bottom: 8px; border-bottom: 1px solid #eaf0f6; padding-bottom: 4px; }
+  .estimate-box p { font-size: 13px; margin-bottom: 3px; }
+  .estimate-box strong { font-size: 16px; }
   .estimate-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
   .estimate-table th { background: #2e86c1; color: white; padding: 8px 10px; font-size: 12px; text-align: left; }
   .estimate-table td { border-bottom: 1px solid #eaf0f6; padding: 8px 10px; font-size: 13px; }
   .estimate-table tr:last-child td { border-bottom: none; }
   .estimate-table .num { text-align: right; }
-  @media print { body { background: white; } .app-header, .card:not(#preview-card), .no-print { display: none !important; } .container { display: block; max-width: 100%; padding: 0; } #preview-card { box-shadow: none; border-radius: 0; } #preview { display: block !important; } .btn-primary, .btn-secondary { display: none; } }
-  .quick-btn { background: #eaf4fb; border: 1px solid #aed6f1; border-radius: 6px; padding: 5px 10px; font-size: 12px; cursor: pointer; color: #1a5276; font-family: inherit; transition: background 0.15s; }
-  .quick-btn:hover { background: #d6eaf8; }
+  .estimate-total-box { border: 2px solid #2e86c1; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+  .estimate-total-box .row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 13px; }
+  .estimate-total-box .row.grand { font-weight: 700; font-size: 18px; color: #1a5276; border-top: 2px solid #2e86c1; margin-top: 8px; padding-top: 10px; }
+  .estimate-footer { text-align: center; font-size: 11px; color: #999; margin-top: 12px; border-top: 1px solid #eee; padding-top: 12px; }
+  .valid-until { background: #fff8e1; border: 1px solid #f9c825; border-radius: 6px; padding: 8px 12px; font-size: 12px; margin-bottom: 16px; color: #7d6608; }
+  .stamp-area { float: right; border: 1px solid #ccc; border-radius: 4px; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #aaa; margin-bottom: 8px; }
+  .clearfix::after { content: ''; display: table; clear: both; }
+
+  /* ===== 印刷 ===== */
+  @media print {
+    body { background: white; }
+    .app-header, .card:not(#preview-card), .no-print { display: none !important; }
+    .container { display: block; max-width: 100%; padding: 0; }
+    #preview-card { box-shadow: none; border-radius: 0; }
+    #preview { display: block !important; }
+    .btn-primary, .btn-secondary { display: none; }
+  }
+
+  /* ===== 名刺スキャンボタン ===== */
+  .btn-scan {
+    background: rgba(255,255,255,0.2); color: white;
+    border: 1.5px solid rgba(255,255,255,0.6);
+    border-radius: 6px; padding: 5px 11px; font-size: 12px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: background 0.15s;
+    white-space: nowrap; display: flex; align-items: center; gap: 4px;
+  }
+  .btn-scan:hover { background: rgba(255,255,255,0.35); }
+
+  /* ===== モーダル ===== */
+  .modal-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.6); z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal-box {
+    background: white; border-radius: 16px; padding: 28px 28px 24px;
+    max-width: 440px; width: 92%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  .modal-box h2 { font-size: 17px; color: #1a5276; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .modal-box p { font-size: 13px; color: #555; margin-bottom: 12px; line-height: 1.7; }
+  .modal-input {
+    width: 100%; border: 1.5px solid #d0dce8; border-radius: 8px;
+    padding: 9px 12px; font-size: 14px; font-family: inherit;
+    margin-bottom: 6px; letter-spacing: 0.5px;
+  }
+  .modal-input:focus { outline: none; border-color: #2e86c1; box-shadow: 0 0 0 3px rgba(46,134,193,0.1); }
+  .modal-hint { font-size: 11px; color: #999; margin-bottom: 16px; }
+  .modal-hint a { color: #2e86c1; }
+  .modal-btn-row { display: flex; gap: 8px; }
+  .modal-btn-primary {
+    flex: 1; background: linear-gradient(135deg, #1a5276, #2e86c1); color: white;
+    border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: opacity 0.2s;
+  }
+  .modal-btn-primary:hover { opacity: 0.9; }
+  .modal-btn-secondary {
+    background: #eaf0f6; color: #555; border: none; border-radius: 8px;
+    padding: 11px 18px; font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+  .modal-btn-secondary:hover { background: #d5e8f5; }
+  .modal-divider { border: none; border-top: 1px solid #eee; margin: 16px 0 12px; }
+  .modal-reset-link {
+    text-align: center; font-size: 12px; color: #999; cursor: pointer;
+    text-decoration: underline;
+  }
+  .modal-reset-link:hover { color: #e74c3c; }
+
+  /* ===== ローディング ===== */
+  .loading-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.72); z-index: 2000;
+    align-items: center; justify-content: center;
+    flex-direction: column; gap: 18px; color: white;
+  }
+  .loading-overlay.active { display: flex; }
+  .spinner {
+    width: 52px; height: 52px; border: 4px solid rgba(255,255,255,0.3);
+    border-top-color: white; border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { font-size: 15px; font-weight: 600; letter-spacing: 0.5px; }
+  .loading-sub { font-size: 12px; opacity: 0.7; }
+
+  /* ===== トースト通知 ===== */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #27ae60; color: white; padding: 12px 28px; border-radius: 10px;
+    font-size: 14px; font-weight: 700; z-index: 3000; opacity: 0;
+    transition: opacity 0.3s; pointer-events: none; white-space: nowrap;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  }
+  .toast.show { opacity: 1; }
+
+  /* ===== スキャン画像プレビュー ===== */
+  .card-img-preview {
+    width: 100%; max-height: 140px; object-fit: contain;
+    border: 1px solid #d0dce8; border-radius: 8px; margin-bottom: 10px;
+    display: none;
+  }
 </style>
 </head>
 <body>
+
 <div class="app-header">
   <div>
     <h1>📋 見積書自動作成</h1>
     <span>知多クリーン・おそうじ侍</span>
   </div>
 </div>
+
 <div class="container">
+
+  <!-- 左列：入力フォーム -->
   <div>
+    <!-- お客様情報 -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-header">👤 お客様情報</div>
+      <div class="card-header">
+        <span class="card-header-title">👤 お客様情報</span>
+        <button class="btn-scan no-print" onclick="startScan()" title="名刺の写真からお客様情報を自動入力">
+          📷 名刺読み込み
+        </button>
+      </div>
       <div class="card-body">
+        <img id="cardImgPreview" class="card-img-preview" alt="名刺プレビュー">
         <div class="form-row">
-          <div class="form-group"><label>お客様名 *</label><input type="text" id="customerName" placeholder="例：山田 太郎"></div>
-          <div class="form-group"><label>敗称</label><select id="honorific"><option>様</option><option>御中</option><option>さん</option></select></div>
+          <div class="form-group">
+            <label>お客様名 *</label>
+            <input type="text" id="customerName" placeholder="例：山田 太郎">
+          </div>
+          <div class="form-group">
+            <label>敬称</label>
+            <select id="honorific">
+              <option>様</option>
+              <option>御中</option>
+              <option>さん</option>
+            </select>
+          </div>
         </div>
-        <div class="form-row full"><div class="form-group"><label>住所</label><input type="text" id="customerAddress" placeholder="例：愛知県知多市「「町1-1"></div></div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label>会社名</label>
+            <input type="text" id="companyName" placeholder="例：株式会社〇〇">
+          </div>
+        </div>
+  
+      <div class="form-row full">
+          <div class="form-group">
+            <label>住所</label>
+            <input type="text" id="customerAddress" placeholder="例：愛知県知多市〇〇町1-1">
+          </div>
+        </div>
         <div class="form-row">
-          <div class="form-group"><label>電話番号</label><input type="text" id="customerPhone" placeholder="090-0000-0000"></div>
-          <div class="form-group"><label>集客チャネル</label><select id="channel"><option value="">選択してください</option><option>ユアマイスター</option><option>ミツモア</option><option>くらしのマーケット</option><option>HP（Web集客）</option><option>リピート・紹介</option><option>テレアポ（個人）</option><option>法人テレアポ</option><option>その他ポータル</option><option>チラシ</option><option>東邦ガス</option><option>その他</option></select></div>
+          <div class="form-group">
+            <label>電話番号</label>
+            <input type="text" id="customerPhone" placeholder="090-0000-0000">
+          </div>
+          <div class="form-group">
+            <label>集客チャネル</label>
+            <select id="channel">
+              <option value="">選択してください</option>
+              <option>ユアマイスター</option>
+              <option>ミツモア</option>
+              <option>くらしのマーケット</option>
+              <option>HP（Web集客）</option>
+              <option>リピート・紹介</option>
+              <option>テレアポ（個人）</option>
+              <option>法人テレアポ</option>
+              <option>その他ポータル</option>
+              <option>チラシ</option>
+              <option>東邦ガス</option>
+              <option>その他</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- 見積書情報 -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-header">📄 見積書情報</div>
+      <div class="card-header"><span class="card-header-title">📄 見積書情報</span></div>
       <div class="card-body">
         <div class="form-row">
-          <div class="form-group"><label>見積番号</label><input type="text" id="estimateNo" placeholder="例：EST-2026-001"></div>
-          <div class="form-group"><label>作成日</label><input type="date" id="issueDate"></div>
+          <div class="form-group">
+            <label>見積番号</label>
+            <input type="text" id="estimateNo" placeholder="例：EST-2026-001">
+          </div>
+          <div class="form-group">
+            <label>作成日</label>
+            <input type="date" id="issueDate">
+          </div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>有効期限</label><input type="date" id="validDate"></div>
-          <div class="form-group"><label>作業予定日</label><input type="date" id="workDate"></div>
+          <div class="form-group">
+            <label>有効期限</label>
+            <input type="date" id="validDate">
+          </div>
+          <div class="form-group">
+            <label>作業予定日</label>
+            <input type="date" id="workDate">
+          </div>
         </div>
         <div class="form-row">
-          <div class="form-group"><label>作業時間帯</label><input type="text" id="workTime" placeholder="例：10:00～12:00"></div>
-          <div class="form-group"><label>担当スタッフ</label><input type="text" id="staffName" placeholder="例：田中"></div>
+          <div class="form-group">
+            <label>作業時間帯</label>
+            <input type="text" id="workTime" placeholder="例：10:00〜12:00">
+          </div>
+          <div class="form-group">
+            <label>担当スタッフ</label>
+            <input type="text" id="staffName" placeholder="例：田中">
+          </div>
         </div>
-        <div class="form-row full"><div class="form-group"><label>備考</label><textarea id="remarks" placeholder="特記事項・注意事項など"></textarea></div></div>
+        <div class="form-row full">
+          <div class="form-group">
+            <label>備考</label>
+            <textarea id="remarks" placeholder="特記事項・注意事項など"></textarea>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- 支払い情報 -->
     <div class="card">
-      <div class="card-header">💳 支払い情報</div>
+      <div class="card-header"><span class="card-header-title">💳 支払い情報</span></div>
       <div class="card-body">
         <div class="form-row">
-          <div class="form-group"><label>支払方法</label><select id="paymentMethod"><option>現金</option><option>振込</option><option>クレジットカード</option><option>電子マネー</option><option>その他</option></select></div>
-          <div class="form-group"><label>支払タイミング</label><select id="paymentTiming"><option>作業当日</option><option>作業後請求書発行</option><option>前払い</option></select></div>
+          <div class="form-group">
+            <label>支払方法</label>
+            <select id="paymentMethod">
+              <option>現金</option>
+              <option>振込</option>
+              <option>クレジットカード</option>
+              <option>電子マネー</option>
+              <option>その他</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>支払タイミング</label>
+            <select id="paymentTiming">
+              <option>作業当日</option>
+              <option>作業後請求書発行</option>
+              <option>前払い</option>
+            </select>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- 右列：サービス・金額 -->
   <div>
+    <!-- サービス内容 -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-header">🧹 サービス内容</div>
+      <div class="card-header"><span class="card-header-title">🧹 サービス内容</span></div>
       <div class="card-body">
-        <div class="service-header"><span>サービス名</span><span>単価（円）</span><span>数量</span><span></span></div>
+        <div class="service-header">
+          <span>サービス名</span>
+          <span>単価（円）</span>
+          <span>数量</span>
+          <span></span>
+        </div>
         <div id="serviceList"></div>
         <button class="btn-add" onclick="addService()">＋ サービスを追加</button>
+
+        <!-- クイック選択 -->
         <div style="margin-top:16px; border-top:1px solid #eee; padding-top:12px;">
           <div style="font-size:12px; color:#888; font-weight:600; margin-bottom:8px;">🔖 クイック追加</div>
           <div style="display:flex; flex-wrap:wrap; gap:6px;">
@@ -126,17 +398,40 @@
             <button class="quick-btn" onclick="quickAdd('出張費',3300,1)">出張費</button>
           </div>
         </div>
+
+        <!-- 合計 -->
         <div class="total-section">
-          <div class="total-row"><span>小計</span><span id="subtotal">¥0</span></div>
-          <div class="total-row"><span class="discount-row">割引<input type="number" id="discountAmt" placeholder="0" min="0" oninput="calcTotal()" style="width:100px;">円</span><span id="discountDisplay" style="color:#e74c3c;">-¥0</span></div>
-          <div class="total-row"><span>税抜合計</span><span id="beforeTax">¥0</span></div>
-          <div class="total-row"><span>消費税（10%）</span><span id="taxAmt">¥0</span></div>
-          <div class="total-row grand"><span>お見積金額（税込）</span><span id="grandTotal">¥0</span></div>
+          <div class="total-row">
+            <span>小計</span>
+            <span id="subtotal">¥0</span>
+          </div>
+          <div class="total-row">
+            <span class="discount-row">
+              割引
+              <input type="number" id="discountAmt" placeholder="0" min="0" oninput="calcTotal()" style="width:100px;">
+              円
+            </span>
+            <span id="discountDisplay" style="color:#e74c3c;">-¥0</span>
+          </div>
+          <div class="total-row">
+            <span>税抜合計</span>
+            <span id="beforeTax">¥0</span>
+          </div>
+          <div class="total-row">
+            <span>消費税（10%）</span>
+            <span id="taxAmt">¥0</span>
+          </div>
+          <div class="total-row grand">
+            <span>お見積金額（税込）</span>
+            <span id="grandTotal">¥0</span>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- アクション -->
     <div class="card">
-      <div class="card-header">⚡ アクション</div>
+      <div class="card-header"><span class="card-header-title">⚡ アクション</span></div>
       <div class="card-body">
         <button class="btn-primary" onclick="generatePreview()">📄 見積書を生成・プレビュー</button>
         <button class="btn-secondary no-print" onclick="printEstimate()">🖨️ 印刷 / PDF保存</button>
@@ -145,76 +440,485 @@
     </div>
   </div>
 </div>
+
+<!-- プレビューモーダル風エリア -->
 <div id="previewArea" style="display:none; max-width:800px; margin:0 auto 32px; padding:0 16px;">
-  <div class="card" id="preview-card"><div id="preview"></div></div>
-  <div class="no-print" style="display:flex; gap:10px; margin-top:12px;">
+  <div class="card" id="preview-card">
+    <div id="preview"></div>
+  </div>
+  <div class="no-print" style="display:flex; gap:10px; margin-top:12px; max-width:800px;">
     <button class="btn-primary" style="flex:1;" onclick="printEstimate()">🖨️ 印刷 / PDF保存</button>
     <button class="btn-secondary" style="flex:1;" onclick="closePreview()">✕ 閉じる</button>
   </div>
 </div>
+
+<!-- ===== 名刺スキャン：APIキー設定モーダル ===== -->
+<div class="modal-overlay" id="apiKeyModal">
+  <div class="modal-box">
+    <h2>🔑 APIキーを設定</h2>
+    <p>名刺読み込み機能は <strong>Claude AI（Anthropic）</strong> を使用します。<br>
+    1枚あたり約 <strong>0.1円</strong> の費用がかかります（従量課金）。</p>
+    <p style="margin-bottom:14px;">APIキーは <a href="https://console.anthropic.com/" target="_blank" style="color:#2e86c1; font-weight:600;">console.anthropic.com</a> から取得してください。</p>
+    <input type="password" class="modal-input" id="apiKeyInput" placeholder="sk-ant-api03-..." autocomplete="off">
+    <div class="modal-hint">※ キーはこのデバイスのブラウザにのみ保存されます。一度入力すれば次回から不要です。</div>
+    <div class="modal-btn-row">
+      <button class="modal-btn-secondary" onclick="closeApiKeyModal()">キャンセル</button>
+      <button class="modal-btn-primary" onclick="saveApiKey()">保存して続ける →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== ローディング ===== -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Claude AIが名刺を解析中...</div>
+  <div class="loading-sub">しばらくお待ちください</div>
+</div>
+
+<!-- ===== トースト通知 ===== -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== 隠しファイルinput ===== -->
+<input type="file" id="cardImageInput" accept="image/*" capture="environment" style="display:none" onchange="processCardImage(event)">
+
+<style>
+.quick-btn {
+  background: #eaf4fb; border: 1px solid #aed6f1; border-radius: 6px;
+  padding: 5px 10px; font-size: 12px; cursor: pointer; color: #1a5276;
+  font-family: inherit; transition: background 0.15s;
+}
+.quick-btn:hover { background: #d6eaf8; }
+</style>
+
 <script>
-let serviceCount=0;
-window.onload=function(){
-  const today=new Date();
-  const fmt=d=>d.toISOString().split('T')[0];
-  document.getElementById('issueDate').value=fmt(today);
-  const valid=new Date(today);valid.setDate(valid.getDate()+30);
-  document.getElementById('validDate').value=fmt(valid);
-  const y=today.getFullYear(),m=String(today.getMonth()+1).padStart(2,'0'),d2=String(today.getDate()).padStart(2,'0'),rand=String(Math.floor(Math.random()*900)+100);
-  document.getElementById('estimateNo').value=`EST-${y}${m}${d2}-${rand}`;
-  addService();
+// ===== 初期化 =====
+let serviceCount = 0;
+
+window.onload = function() {
+  const today = new Date();
+  const fmt = d => d.toISOString().split('T')[0];
+  document.getElementById('issueDate').value = fmt(today);
+  const valid = new Date(today); valid.setDate(valid.getDate() + 30);
+  document.getElementById('validDate').value = fmt(valid);
+
+  // 見積番号自動生成
+  const y = today.getFullYear();
+  const m = String(today.getMonth()+1).padStart(2,'0');
+  const d2 = String(today.getDate()).padStart(2,'0');
+  const rand = String(Math.floor(Math.random()*900)+100);
+  document.getElementById('estimateNo').value = `EST-${y}${m}${d2}-${rand}`;
+
+  addService(); // 初期行を1行追加
 };
-function addService(name='',price='',qty=1){
+
+// ===== サービス行追加 =====
+function addService(name='', price='', qty=1) {
   serviceCount++;
-  const id=serviceCount;
-  const row=document.createElement('div');
-  row.className='service-row';row.id=`srow-${id}`;
-  row.innerHTML=`<input type="text" placeholder="サービス名" value="${name}" oninput="calcTotal()"><input type="number" placeholder="単価" value="${price}" min="0" oninput="calcTotal()"><input type="number" placeholder="数量" value="${qty}" min="1" style="text-align:center;" oninput="calcTotal()"><button class="btn-remove" onclick="removeService(${id})">x</button>`;
+  const id = serviceCount;
+  const row = document.createElement('div');
+  row.className = 'service-row';
+  row.id = `srow-${id}`;
+  row.innerHTML = `
+    <input type="text" placeholder="サービス名" value="${name}" oninput="calcTotal()">
+    <input type="number" placeholder="単価" value="${price}" min="0" oninput="calcTotal()">
+    <input type="number" placeholder="数量" value="${qty}" min="1" style="text-align:center;" oninput="calcTotal()">
+    <button class="btn-remove" onclick="removeService(${id})">×</button>
+  `;
   document.getElementById('serviceList').appendChild(row);
   calcTotal();
 }
-function quickAdd(name,price,qty){addService(name,price,qty);}
-function removeService(id){const el=document.getElementById(`srow-${id}`);if(el){el.remove();calcTotal();}}
-function calcTotal(){
-  const rows=document.querySelectorAll('.service-row');let subtotal=0;
-  rows.forEach(row=>{const inputs=row.querySelectorAll('input');const price=parseFloat(inputs[1].value)||0;const qty=parseFloat(inputs[2].value)||0;subtotal+=price*qty;});
-  const discount=parseFloat(document.getElementById('discountAmt').value)||0;
-  const beforeTax=Math.max(0,subtotal-discount);const tax=Math.round(beforeTax*0.1);const grand=beforeTax+tax;
-  const fmt=n=>'¥'+n.toLocaleString();
-  document.getElementById('subtotal').textContent=fmt(subtotal);
-  document.getElementById('discountDisplay').textContent=discount>0?`-${fmt(discount)}`:'-¥0';
-  document.getElementById('beforeTax').textContent=fmt(beforeTax);
-  document.getElementById('taxAmt').textContent=fmt(tax);
-  document.getElementById('grandTotal').textContent=fmt(grand);
+
+function quickAdd(name, price, qty) {
+  addService(name, price, qty);
 }
-function fmtDate(str){if(!str)return'未定';const d=new Date(str);return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;}
-function generatePreview(){
-  const name=document.getElementById('customerName').value||'（未入力）';
-  const honorific=document.getElementById('honorific').value;
-  const address=document.getElementById('customerAddress').value;
-  const phone=document.getElementById('customerPhone').value;
-  const channel=document.getElementById('channel').value;
-  const estimateNo=document.getElementById('estimateNo').value;
-  const issueDate=fmtDate(document.getElementById('issueDate').value);
-  const validDate=fmtDate(document.getElementById('validDate').value);
-  const workDate=fmtDate(document.getElementById('workDate').value);
-  const workTime=document.getElementById('workTime').value;
-  const staffName=document.getElementById('staffName').value;
-  const remarks=document.getElementById('remarks').value;
-  const payMethod=document.getElementById('paymentMethod').value;
-  const payTiming=document.getElementById('paymentTiming').value;
-  let serviceRows='';let subtotal=0;
-  document.querySelectorAll('.service-row').forEach(row=>{const inputs=row.querySelectorAll('input');const sname=inputs[0].value;const price=parseFloat(inputs[1].value)||0;const qty=parseFloat(inputs[2].value)||0;if(!sname&&price===0)return;const amount=price*qty;subtotal+=amount;serviceRows+=`<tr><td>${sname||'（未入力）'}</td><td class="num">¥${price.toLocaleString()}</td><td class="num">${qty}</td><td class="num">¥${amount.toLocaleString()}</td></tr>`;});
-  const discount=parseFloat(document.getElementById('discountAmt').value)||0;
-  const beforeTax=Math.max(0,subtotal-discount);const tax=Math.round(beforeTax*0.1);const grand=beforeTax+tax;
-  document.getElementById('preview').innerHTML=`<div style="padding:28px 32px;background:white;"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:20px;"><div><div style="font-size:11px;color:#2e86c1;font-weight:700;margin-bottom:4px;">知多クリーン・おそうじ侍</div><div style="font-size:28px;font-weight:700;color:#1a5276;letter-spacing:2px;">見 積 書</div></div><div style="text-align:right;font-size:12px;color:#666;"><div>見積番号：<strong>${estimateNo}</strong></div><div style="margin-top:4px;">発行日：${issueDate}</div></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;"><div style="border:1px solid #dce6ef;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#2e86c1;font-weight:700;border-bottom:1px solid #eaf0f6;padding-bottom:4px;margin-bottom:8px;">お客様</div><div style="font-size:18px;font-weight:700;">${name} ${honorific}</div>${address?`<div style="font-size:12px;color:#555;margin-top:4px;">〒 ${address}</div>`:''} ${phone?`<div style="font-size:12px;color:#555;">📞 ${phone}</div>`:''} ${channel?`<div style="font-size:11px;color:#888;margin-top:4px;">集客：${channel}</div>`:''}</div><div style="border:1px solid #dce6ef;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#2e86c1;font-weight:700;border-bottom:1px solid #eaf0f6;padding-bottom:4px;margin-bottom:8px;">作業情報</div><div style="font-size:13px;"><strong>作業日：</strong>${workDate}</div>${workTime?`<div style="font-size:13px;"><strong>時間帯：</strong>${workTime}</div>`:''} ${staffName?`<div style="font-size:13px;"><strong>担当：</strong>${staffName}</div>`:''}<div style="font-size:13px;"><strong>支払：</strong>${payMethod}（${payTiming}）</div></div></div><div style="background:#fff8e1;border:1px solid #f9c825;border-radius:6px;padding:8px 14px;font-size:12px;color:#7d6608;margin-bottom:16px;">⏰ 本見積の有効期限：<strong>${validDate}</strong></div><table class="estimate-table" style="width:100%;border-collapse:collapse;margin-bottom:16px;"><thead><tr><th style="background:#2e86c1;color:white;padding:9px 12px;font-size:12px;text-align:left;">サービス内容</th><th style="background:#2e86c1;color:white;padding:9px 12px;font-size:12px;text-align:right;">単価</th><th style="background:#2e86c1;color:white;padding:9px 12px;font-size:12px;text-align:right;">数量</th><th style="background:#2e86c1;color:white;padding:9px 12px;font-size:12px;text-align:right;">金額</th></tr></thead><tbody>${serviceRows||'<tr><td colspan="4" style="text-align:center;padding:12px;color:#aaa;">サービスが入力されていません</td></tr>'}</tbody></table><div style="border:2px solid #2e86c1;border-radius:8px;padding:14px 18px;margin-bottom:16px;max-width:320px;margin-left:auto;"><div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;"><span>小計</span><span>¥${subtotal.toLocaleString()}</span></div>${discount>0?`<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;color:#e74c3c;"><span>割引</span><span>-¥${discount.toLocaleString()}</span></div>`:''}<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;"><span>税抜合計</span><span>¥${beforeTax.toLocaleString()}</span></div><div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0;"><span>消費税（10%）</span><span>¥${tax.toLocaleString()}</span></div><div style="display:flex;justify-content:space-between;font-size:18px;font-weight:700;color:#1a5276;border-top:2px solid #2e86c1;margin-top:8px;padding-top:10px;"><span>お見積金額（税込）</span><span>¥${grand.toLocaleString()}</span></div></div>${remarks?`<div style="border:1px solid #dce6ef;border-radius:8px;padding:12px;margin-bottom:16px;"><div style="font-size:11px;color:#2e86c1;font-weight:700;margin-bottom:6px;">📝 備考・特記事項</div><div style="font-size:13px;white-space:pre-wrap;color:#555;">${remarks}</div></div>`:''}<div style="border-top:1px solid #eee;padding-top:14px;font-size:11px;color:#888;text-align:center;line-height:1.8;"><strong style="color:#1a5276;">レオンバンク・テクノロジーズ株式会社</strong><br>知多クリーン・おそうじ侍<br>ご不明な点はお気軽にお問い合わせください</div></div>`;
-  document.getElementById('preview').style.display='block';
-  document.getElementById('previewArea').style.display='block';
-  document.getElementById('previewArea').scrollIntoView({behavior:'smooth',block:'start'});
+
+function removeService(id) {
+  const el = document.getElementById(`srow-${id}`);
+  if(el) { el.remove(); calcTotal(); }
 }
-function closePreview(){document.getElementById('previewArea').style.display='none';document.getElementById('preview').style.display='none';}
-function printEstimate(){if(document.getElementById('previewArea').style.display==='none'){generatePreview();setTimeout(()=>window.print(),400);}else{window.print();}}
-function resetForm(){if(!confirm('入力内容をすべてリセットしますか？'))return;['customerName','customerAddress','customerPhone','workDate','workTime','staffName','remarks','discountAmt'].forEach(id=>document.getElementById(id).value='');document.getElementById('channel').value='';document.getElementById('serviceList').innerHTML='';serviceCount=0;closePreview();calcTotal();addService();window.scrollTo({top:0,behavior:'smooth'});}
+
+// ===== 合計計算 =====
+function calcTotal() {
+  const rows = document.querySelectorAll('.service-row');
+  let subtotal = 0;
+  rows.forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const price = parseFloat(inputs[1].value) || 0;
+    const qty = parseFloat(inputs[2].value) || 0;
+    subtotal += price * qty;
+  });
+  const discount = parseFloat(document.getElementById('discountAmt').value) || 0;
+  const beforeTax = Math.max(0, subtotal - discount);
+  const tax = Math.round(beforeTax * 0.1);
+  const grand = beforeTax + tax;
+
+  const fmt = n => '¥' + n.toLocaleString();
+  document.getElementById('subtotal').textContent = fmt(subtotal);
+  document.getElementById('discountDisplay').textContent = discount > 0 ? `-${fmt(discount)}` : '-¥0';
+  document.getElementById('beforeTax').textContent = fmt(beforeTax);
+  document.getElementById('taxAmt').textContent = fmt(tax);
+  document.getElementById('grandTotal').textContent = fmt(grand);
+}
+
+// ===== 日付フォーマット =====
+function fmtDate(str) {
+  if(!str) return '未定';
+  const d = new Date(str);
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+// ===== プレビュー生成 =====
+function generatePreview() {
+  const name = document.getElementById('customerName').value || '（未入力）';
+  const honorific = document.getElementById('honorific').value;
+  const company = document.getElementById('companyName').value;
+  const address = document.getElementById('customerAddress').value;
+  const phone = document.getElementById('customerPhone').value;
+  const channel = document.getElementById('channel').value;
+  const estimateNo = document.getElementById('estimateNo').value;
+  const issueDate = fmtDate(document.getElementById('issueDate').value);
+  const validDate = fmtDate(document.getElementById('validDate').value);
+  const workDate = fmtDate(document.getElementById('validDate').value);
+  const workDate = fmtDate(document.getElementById('workDate').value);
+  const workTime = document.getElementById('workTime').value;
+  const staffName = document.getElementById('staffName').value;
+  const remarks = document.getElementById('remarks').value;
+  const payMethod = document.getElementById('paymentMethod').value;
+  const payTiming = document.getElementById('paymentTiming').value;
+
+  // サービス行
+  let serviceRows = '';
+  let subtotal = 0;
+  document.querySelectorAll('.service-row').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    const sname = inputs[0].value;
+    const price = parseFloat(inputs[1].value) || 0;
+    const qty = parseFloat(inputs[2].value) || 0;
+    if(!sname && price === 0) return;
+    const amount = price * qty;
+    subtotal += amount;
+    serviceRows += `<tr>
+      <td>${sname || '（未入力）'}</td>
+      <td class="num">¥${price.toLocaleString()}</td>
+      <td class="num">${qty}</td>
+      <td class="num">¥${amount.toLocaleString()}</td>
+    </tr>`;
+  });
+  const discount = parseFloat(document.getElementById('discountAmt').value) || 0;
+  const beforeTax = Math.max(0, subtotal - discount);
+  const tax = Math.round(beforeTax * 0.1);
+  const grand = beforeTax + tax;
+
+  document.getElementById('preview').innerHTML = `
+    <div style="padding:28px 32px; background:white;">
+      <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px;">
+        <div>
+          <div style="font-size:11px; color:#2e86c1; font-weight:700; margin-bottom:4px;">知多クリーン・おそうじ侍</div>
+          <div style="font-size:28px; font-weight:700; color:#1a5276; letter-spacing:2px;">見 積 書</div>
+        </div>
+        <div style="text-align:right; font-size:12px; color:#666;">
+          <div>見積番号：<strong>${estimateNo}</strong></div>
+          <div style="margin-top:4px;">発行日：${issueDate}</div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+        <div style="border:1px solid #dce6ef; border-radius:8px; padding:14px;">
+          <div style="font-size:11px; color:#2e86c1; font-weight:700; border-bottom:1px solid #eaf0f6; padding-bottom:4px; margin-bottom:8px;">お客様</div>
+          ${company ? `<div style="font-size:13px; color:#555; margin-bottom:2px;">${company}</div>` : ''}
+          <div style="font-size:18px; font-weight:700;">${name} ${honorific}</div>
+          ${address ? `<div style="font-size:12px; color:#555; margin-top:4px;">〒 ${address}</div>` : ''}
+          ${phone ? `<div style="font-size:12px; color:#555;">📞 ${phone}</div>` : ''}
+          ${channel ? `<div style="font-size:11px; color:#888; margin-top:4px;">集客：${channel}</div>` : ''}
+        </div>
+        <div style="border:1px solid #dce6ef; border-radius:8px; padding:14px;">
+          <div style="font-size:11px; color:#2e86c1; font-weight:700; border-bottom:1px solid #eaf0f6; padding-bottom:4px; margin-bottom:8px;">作業情報</div>
+          <div style="font-size:13px;"><strong>作業日：</strong>${workDate}</div>
+          ${workTime ? `<div style="font-size:13px;"><strong>時間帯：</strong>${workTime}</div>` : ''}
+          ${staffName ? `<div style="font-size:13px;"><strong>担当：</strong>${staffName}</div>` : ''}
+          <div style="font-size:13px;"><strong>支払：</strong>${payMethod}（${payTiming}）</div>
+        </div>
+      </div>
+
+      <div style="background:#fff8e1; border:1px solid #f9c825; border-radius:6px; padding:8px 14px; font-size:12px; color:#7d6608; margin-bottom:16px;">
+        ⏰ 本見積の有効期限：<strong>${validDate}</strong>
+      </div>
+
+      <table class="estimate-table" style="width:100%; border-collapse:collapse; margin-bottom:16px;">
+        <thead>
+          <tr>
+            <th style="background:#2e86c1; color:white; padding:9px 12px; font-size:12px; text-align:left;">サービス内容</th>
+            <th style="background:#2e86c1; color:white; padding:9px 12px; font-size:12px; text-align:right;">単価</th>
+            <th style="background:#2e86c1; color:white; padding:9px 12px; font-size:12px; text-align:right;">数量</th>
+            <th style="background:#2e86c1; color:white; padding:9px 12px; font-size:12px; text-align:right;">金額</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${serviceRows || '<tr><td colspan="4" style="text-align:center; padding:12px; color:#aaa;">サービスが入力されていません</td></tr>'}
+        </tbody>
+      </table>
+
+      <div style="border:2px solid #2e86c1; border-radius:8px; padding:14px 18px; margin-bottom:16px; max-width:320px; margin-left:auto;">
+        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
+          <span>小計</span><span>¥${subtotal.toLocaleString()}</span>
+        </div>
+        ${discount > 0 ? `<div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0; color:#e74c3c;">
+          <span>割引</span><span>-¥${discount.toLocaleString()}</span>
+        </div>` : ''}
+        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
+          <span>税抜合計</span><span>¥${beforeTax.toLocaleString()}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; padding:3px 0;">
+          <span>消費税（10%）</span><span>¥${tax.toLocaleString()}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:700; color:#1a5276; border-top:2px solid #2e86c1; margin-top:8px; padding-top:10px;">
+          <span>お見積金額（税込）</span><span>¥${grand.toLocaleString()}</span>
+        </div>
+      </div>
+
+      ${remarks ? `<div style="border:1px solid #dce6ef; border-radius:8px; padding:12px; margin-bottom:16px;">
+        <div style="font-size:11px; color:#2e86c1; font-weight:700; margin-bottom:6px;">📝 備考・特記事項</div>
+        <div style="font-size:13px; white-space:pre-wrap; color:#555;">${remarks}</div>
+      </div>` : ''}
+
+      <div style="border-top:1px solid #eee; padding-top:14px; font-size:11px; color:#888; text-align:center; line-height:1.8;">
+        <strong style="color:#1a5276;">知多クリーン・おそうじ侍</strong><br>
+        ご不明な点はお気軽にお問い合わせください
+      </div>
+    </div>
+  `;
+
+  document.getElementById('preview').style.display = 'block';
+  document.getElementById('previewArea').style.display = 'block';
+  document.getElementById('previewArea').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closePreview() {
+  document.getElementById('previewArea').style.display = 'none';
+  document.getElementById('preview').style.display = 'none';
+}
+
+function printEstimate() {
+  if(document.getElementById('previewArea').style.display === 'none') {
+    generatePreview();
+    setTimeout(() => window.print(), 400);
+  } else {
+    window.print();
+  }
+}
+
+function resetForm() {
+  if(!confirm('入力内容をすべてリセットしますか？')) return;
+  document.getElementById('customerName').value = '';
+  document.getElementById('companyName').value = '';
+  document.getElementById('customerAddress').value = '';
+  document.getElementById('customerPhone').value = '';
+  document.getElementById('channel').value = '';
+  document.getElementById('workDate').value = '';
+  document.getElementById('workTime').value = '';
+  document.getElementById('staffName').value = '';
+  document.getElementById('remarks').value = '';
+  document.getElementById('discountAmt').value = '';
+  document.getElementById('serviceList').innerHTML = '';
+  const prev = document.getElementById('cardImgPreview');
+  prev.style.display = 'none'; prev.src = '';
+  serviceCount = 0;
+  closePreview();
+  calcTotal();
+  addService();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ===================================================
+// ===== 名刺スキャン機能（Claude AI Vision） =====
+// ===================================================
+
+const API_KEY_STORAGE = 'chita_clean_anthropic_key';
+
+function startScan() {
+  const key = localStorage.getItem(API_KEY_STORAGE);
+  if (!key) {
+    // APIキー未設定 → モーダル表示
+    document.getElementById('apiKeyInput').value = '';
+    document.getElementById('apiKeyModal').classList.add('active');
+    setTimeout(() => document.getElementById('apiKeyInput').focus(), 100);
+  } else {
+    // APIキー設定済み → 直接ファイル選択
+    document.getElementById('cardImageInput').click();
+  }
+}
+
+function closeApiKeyModal() {
+  document.getElementById('apiKeyModal').classList.remove('active');
+}
+
+function saveApiKey() {
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if (!key || !key.startsWith('sk-ant-')) {
+    alert('有効なAnthropicのAPIキーを入力してください。\n（"sk-ant-" で始まるキーです）');
+    return;
+  }
+  localStorage.setItem(API_KEY_STORAGE, key);
+  closeApiKeyModal();
+  setTimeout(() => document.getElementById('cardImageInput').click(), 200);
+}
+
+// Enterキーでも保存できるように
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('apiKeyInput');
+  if (inp) {
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') saveApiKey(); });
+  }
+});
+
+function showLoading(text) {
+  if (text) document.getElementById('loadingText').textContent = text;
+  document.getElementById('loadingOverlay').classList.add('active');
+}
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.remove('active');
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.background = isError ? '#e74c3c' : '#27ae60';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+
+async function processCardImage(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = ''; // 同じファイルを再選択できるようリセット
+
+  const apiKey = localStorage.getItem(API_KEY_STORAGE);
+  if (!apiKey) { startScan(); return; }
+
+  // 画像プレビュー表示
+  const previewImg = document.getElementById('cardImgPreview');
+  const objectUrl = URL.createObjectURL(file);
+  previewImg.src = objectUrl;
+  previewImg.style.display = 'block';
+
+  // base64変換
+  const reader = new FileReader();
+  reader.onload = async function(e) {
+    const dataUrl = e.target.result;
+    const base64 = dataUrl.split(',')[1];
+    const mimeType = file.type || 'image/jpeg';
+
+    showLoading('Claude AIが名刺を解析中...');
+
+    try {
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+          'content-type': 'application/json',
+          'anthropic-dangerous-direct-browser-access': 'true'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5-20251001',
+          max_tokens: 512,
+          messages: [{
+            role: 'user',
+            content: [
+              {
+                type: 'image',
+                source: { type: 'base64', media_type: mimeType, data: base64 }
+              },
+              {
+                type: 'text',
+                text: `この名刺画像から以下の情報を抽出し、JSONのみを返してください。他のテキストは不要です。
+
+{
+  "name": "個人名（姓名）。役職・肩書きは除く。なければ空文字",
+  "company": "会社名・店名・組織名。なければ空文字",
+  "address": "住所（郵便番号含む）。なければ空文字",
+  "phone": "電話番号。携帯番号があれば優先。なければ空文字",
+  "honorific": "会社宛なら御中、個人なら様"
+}
+
+JSONのみ返答してください。`
+              }
+            ]
+          }]
+        })
+      });
+
+      if (!response.ok) {
+        let errMsg = `APIエラー (${response.status})`;
+        try {
+          const errData = await response.json();
+          errMsg = errData.error?.message || errMsg;
+        } catch(_) {}
+
+        if (response.status === 401) {
+          localStorage.removeItem(API_KEY_STORAGE);
+          hideLoading();
+          showToast('❌ APIキーが無効です。再設定してください', true);
+          setTimeout(() => startScan(), 1800);
+          return;
+        }
+        throw new Error(errMsg);
+      }
+
+      const data = await response.json();
+      const rawText = data.content?.[0]?.text?.trim() || '';
+
+      // JSON部分を抽出（コードブロックがある場合も対応）
+      const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) throw new Error('名刺情報の解析に失敗しました');
+
+      const info = JSON.parse(jsonMatch[0]);
+      hideLoading();
+
+      // フォームに自動入力
+      let filled = [];
+      if (info.name) {
+        document.getElementById('customerName').value = info.name;
+        filled.push('氏名');
+      }
+      if (info.company) {
+        document.getElementById('companyName').value = info.company;
+        filled.push('会社名');
+      }
+      if (info.address) {
+        document.getElementById('customerAddress').value = info.address;
+        filled.push('住所');
+      }
+      if (info.phone) {
+        document.getElementById('customerPhone').value = info.phone;
+        filled.push('電話番号');
+      }
+      if (info.honorific) {
+        const sel = document.getElementById('honorific');
+        const opts = Array.from(sel.options).map(o => o.value);
+        if (opts.includes(info.honorific)) sel.value = info.honorific;
+      }
+
+      if (filled.length > 0) {
+        showToast(`✅ ${filled.join('・')} を自動入力しました`);
+      } else {
+        showToast('⚠️ 名刺から情報を取得できませんでした', true);
+      }
+
+    } catch (err) {
+      hideLoading();
+      console.error('名刺スキャンエラー:', err);
+
+      if (err.name === 'TypeError' && err.message.includes('fetch')) {
+        showToast('❌ ネットワークエラー。接続を確認してください', true);
+      } else {
+        showToast('❌ エラー：' + err.message, true);
+      }
+    }
+  };
+  reader.readAsDataURL(file);
+}
 </script>
+
 </body>
 </html>
