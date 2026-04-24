@@ -231,6 +231,28 @@
 
   <!-- 左列：入力フォーム -->
   <div>
+    <!-- ブランド選択 -->
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-header">
+        <span class="card-header-title">🏷️ ブランド選択</span>
+      </div>
+      <div class="card-body">
+        <div style="display:flex; gap:20px;">
+          <label style="display:flex; align-items:center; gap:6px; font-weight:600; cursor:pointer;">
+            <input type="radio" name="brand" value="知多クリーン" checked>
+            知多クリーン
+          </label>
+          <label style="display:flex; align-items:center; gap:6px; font-weight:600; cursor:pointer;">
+            <input type="radio" name="brand" value="おそうじ侍">
+            おそうじ侍
+          </label>
+        </div>
+        <p style="margin-top:8px; font-size:12px; color:#888;">
+          PDF生成時、見積書の会社名タグが切り替わります（レオンバンク・テクノロジーズ株式会社【選択したブランド】）。
+        </p>
+      </div>
+    </div>
+
     <!-- お客様情報 -->
     <div class="card" style="margin-bottom:16px;">
       <div class="card-header">
@@ -435,6 +457,8 @@
       <div class="card-body">
         <button class="btn-primary" onclick="generatePreview()">📄 見積書を生成・プレビュー</button>
         <button class="btn-secondary no-print" onclick="printEstimate()">🖨️ 印刷 / PDF保存</button>
+        <button class="btn-primary no-print" style="background:#2e7d32;" onclick="generateCloudPDF()">☁️ クラウドでPDF生成（Excel形式）</button>
+        <div id="cloudResult" style="display:none; margin-top:12px; padding:12px; background:#e8f5e9; border-radius:8px; font-size:14px;"></div>
         <button class="btn-secondary no-print" onclick="resetForm()">🔄 リセット</button>
       </div>
     </div>
@@ -703,6 +727,97 @@ function printEstimate() {
     setTimeout(() => window.print(), 400);
   } else {
     window.print();
+  }
+}
+
+// ===== クラウドPDF生成（Render上のFlask APIを叩いてExcel→PDF生成） =====
+const QUOTE_API_BASE = "https://quote-bot-0qd0.onrender.com";
+
+async function generateCloudPDF() {
+  const resultBox = document.getElementById('cloudResult');
+  resultBox.style.display = 'block';
+  resultBox.style.background = '#fff3cd';
+  resultBox.innerHTML = '☁️ クラウドに送信中… <small>(初回は10秒ほどかかります)</small>';
+
+  // フォーム情報を収集
+  const brand = document.querySelector('input[name="brand"]:checked')?.value || '知多クリーン';
+  const customerName = document.getElementById('customerName').value.trim();
+  const honorific = document.getElementById('honorific').value;
+  const companyName = document.getElementById('companyName').value.trim();
+  const phone = document.getElementById('customerPhone').value.trim();
+  const address = document.getElementById('customerAddress').value.trim();
+  const estimateNo = document.getElementById('estimateNo')?.value || new Date().getTime() % 100000;
+  const workDate = document.getElementById('workDate')?.value || '';
+  const remarks = document.getElementById('remarks')?.value || '';
+
+  if (!customerName) {
+    resultBox.style.background = '#f8d7da';
+    resultBox.innerHTML = '❌ お客様名を入力してください';
+    return;
+  }
+
+  // 宛名: 法人(companyName)があれば優先、なければ個人名
+  const 宛名 = companyName || customerName;
+  const 担当者 = companyName ? customerName : '';
+
+  // 明細を収集（#serviceList内の各.service-row）
+  const 明細 = [];
+  document.querySelectorAll('#serviceList .service-row, #serviceList > div').forEach(row => {
+    const inputs = row.querySelectorAll('input');
+    if (inputs.length >= 3) {
+      const name = inputs[0].value.trim();
+      const price = parseFloat(inputs[1].value) || 0;
+      const qty = parseFloat(inputs[2].value) || 1;
+      if (name && price > 0) {
+        明細.push({ 摘要: name, 数量: qty, 単価: Math.round(price / 1.1) });  // 税込→税抜
+      }
+    }
+  });
+
+  if (明細.length === 0) {
+    resultBox.style.background = '#f8d7da';
+    resultBox.innerHTML = '❌ サービス内容を1つ以上追加してください';
+    return;
+  }
+
+  const payload = {
+    ブランド: brand,
+    宛名: 宛名,
+    担当者: 担当者,
+    見積No: parseInt(estimateNo) || 1,
+    見積日: new Date().toISOString().slice(0, 10),
+    件名: 'クリーニング',
+    施工日: workDate || '別途ご相談',
+    支払: '別途ご相談',
+    有効期限: 'お見積り後4週間',
+    備考: remarks,
+    明細: 明細,
+  };
+
+  try {
+    const resp = await fetch(`${QUOTE_API_BASE}/api/quote/generate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    const data = await resp.json();
+
+    if (data.成功) {
+      resultBox.style.background = '#e8f5e9';
+      resultBox.innerHTML = `
+        ✅ <strong>見積書PDFを生成しました！</strong><br>
+        見積No: ${data.見積No}<br>
+        <a href="${data.pdfURL}" target="_blank" style="color:#1976d2; text-decoration:underline;">📄 PDFを開く</a>
+
+        <a href="${data.xlsxURL}" target="_blank" style="color:#1976d2; text-decoration:underline;">📊 Excelを開く</a>
+      `;
+    } else {
+      resultBox.style.background = '#f8d7da';
+      resultBox.innerHTML = `❌ エラー: ${data.error || '不明'}`;
+    }
+  } catch (err) {
+    resultBox.style.background = '#f8d7da';
+    resultBox.innerHTML = `❌ 通信エラー: ${err.message}<br><small>サーバーが起動中の可能性があります。1分後にもう一度お試しください。</small>`;
   }
 }
 
